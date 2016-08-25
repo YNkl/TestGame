@@ -117,11 +117,11 @@ public class Field extends Sprite{
     }
 
     private function moveCellsDown(deletedCells:Array):void{
-        for(var i:Number = 0; i < 1; i++){
+        for(var i:Number = 0; i < deletedCells.length; i++){
             var row:int = 1;
             while(true) {
                 if (deletedCells[i].getRow - row >= 0) {
-                    cells[deletedCells[i].getRow - row][deletedCells[i].getCol].y = deletedCells[i].y;
+                    cells[deletedCells[i].getRow - row][deletedCells[i].getCol].y = deletedCells[i].y - (row - 1) * 40;
                     row++;
                 }
                 else
