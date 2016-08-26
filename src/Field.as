@@ -118,11 +118,22 @@ public class Field extends Sprite{
 
     private function moveCellsDown(deletedCells:Array):void{
         for(var i:Number = 0; i < deletedCells.length; i++){
-            var row:int = 1;
+            var j:int = 1;
+            var row:int = deletedCells[i].getRow;
+            var col:int = deletedCells[i].getCol;
             while(true) {
-                if (deletedCells[i].getRow - row >= 0) {
-                    cells[deletedCells[i].getRow - row][deletedCells[i].getCol].y = deletedCells[i].y - (row - 1) * 40;
-                    row++;
+                if (row - j >= 0) {
+                    //cells
+                    //trace(cells[row - j + 1][col].y);
+                    var curRow = row - j + 1;
+                    trace(curRow);
+                    cells[row - j][col].y = cells[curRow][col].y; //изменить ячейку!!!!!!!!!!!!!
+                    addChild(cells[row - j][col]);
+                    //cells[row - j][col].setNewGridPosition(row - j + 1, col);
+                    cells[curRow][col] = cells[row - j][col];
+                    //cells[deletedCells[i].getRow - row][deletedCells[i].getCol].setNewGridPosition(deletedCells[i].getRow - row + 1,deletedCells[i].getCol);
+                    //cells[deletedCells[i].getRow - row][deletedCells[i].getCol] = null;
+                    j++;
                 }
                 else
                     break;
