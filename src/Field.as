@@ -3,6 +3,10 @@
  */
 package {
 
+import com.greensock.TweenLite;
+import com.greensock.TweenLite;
+import com.greensock.TweenLite;
+
 import starling.display.Sprite;
 import starling.events.TouchEvent;
 import starling.events.TouchPhase;
@@ -58,28 +62,27 @@ public class Field extends Sprite{
         var tempCol:int = firstCell.getCol;
 
         if((firstCell.getCol + 1 == secondCell.getCol || firstCell.getCol - 1 == secondCell.getCol) && firstCell.getRow == secondCell.getRow) {
-            firstCell.x = secondCell.x;
-            firstCell.y = secondCell.y;
+            TweenLite.to(firstCell, 1, {x: secondCell.x, y: secondCell.y});
             cells[secondCell.getRow][secondCell.getCol] = firstCell;
             firstCell.setNewGridPosition(secondCell.getRow, secondCell.getCol);
 
-            secondCell.x = tempX;
-            secondCell.y = tempY;
+            TweenLite.to(secondCell, 1, {x: tempX, y: tempY});
             cells[tempRow][tempCol] = secondCell;
             secondCell.setNewGridPosition(tempRow, tempCol);
         }
         else if((firstCell.getRow + 1 == secondCell.getRow || firstCell.getRow - 1 == secondCell.getRow) && firstCell.getCol == secondCell.getCol) {
-            firstCell.x = secondCell.x;
-            firstCell.y = secondCell.y;
+            TweenLite.to(firstCell, 1, {x: secondCell.x, y: secondCell.y});
             cells[secondCell.getRow][secondCell.getCol] = firstCell;
             firstCell.setNewGridPosition(secondCell.getRow, secondCell.getCol);
 
-            secondCell.x = tempX;
-            secondCell.y = tempY;
+            TweenLite.to(secondCell, 1, {x: tempX, y: tempY});
             cells[tempRow][tempCol] = secondCell;
             secondCell.setNewGridPosition(tempRow, tempCol);
         }
-        findLines(secondCell);
+
+        trace(firstCell.getRow, firstCell.getCol);
+        trace(secondCell.getRow, secondCell.getCol);
+        //findLines(secondCell);
         findLines(firstCell);
         this.firstCell = null;
         this.secondCell = null;
@@ -90,7 +93,7 @@ public class Field extends Sprite{
         var findLeft:Boolean = true;
         var findRight:Boolean = true;
 
-        for(var i:int = 0; i < 6; i++) {
+        for(var i:int = 1; i < 6; i++) {
             if(findLeft == false && findRight == false){
                 break;
             }
@@ -100,6 +103,7 @@ public class Field extends Sprite{
             else{
                 findRight = false;
             }
+            //удалить дублирующие
             if (cells[currCell.getRow][currCell.getCol - i] != null && currCell.getType() == cells[currCell.getRow][currCell.getCol - i].getType() && findLeft) {
                 tempArr.push(cells[currCell.getRow][currCell.getCol - i]);
             }
@@ -108,35 +112,32 @@ public class Field extends Sprite{
             }
 
         }
-        if(tempArr.length > 3) {
+        if(tempArr.length >= 2) {
+            tempArr.push(cells[currCell.getRow][currCell.getCol]);
             for (var j:Number = 0; j < tempArr.length; j++) {
-                tempArr[j].alpha = 0;
-                moveCellsDown(tempArr);
+                deleteCell(tempArr[j]);
             }
         }
     }
 
-    private function moveCellsDown(deletedCells:Array):void{
-        for(var i:Number = 0; i < deletedCells.length; i++){
-            var j:int = 1;
-            var row:int = deletedCells[i].getRow;
-            var col:int = deletedCells[i].getCol;
-            while(true) {
-                if (row - j >= 0) {
-                    //cells
-                    //trace(cells[row - j + 1][col].y);
-                    var curRow = row - j + 1;
-                    trace(curRow);
-                    cells[row - j][col].y = cells[curRow][col].y; //изменить ячейку!!!!!!!!!!!!!
-                    addChild(cells[row - j][col]);
-                    //cells[row - j][col].setNewGridPosition(row - j + 1, col);
-                    cells[curRow][col] = cells[row - j][col];
-                    //cells[deletedCells[i].getRow - row][deletedCells[i].getCol].setNewGridPosition(deletedCells[i].getRow - row + 1,deletedCells[i].getCol);
-                    //cells[deletedCells[i].getRow - row][deletedCells[i].getCol] = null;
-                    j++;
-                }
-                else
-                    break;
+    private function deleteCell(deletedCell:Cell):void{
+        removeChild(deletedCell);
+        cells[deletedCell.getRow][deletedCell.getCol] = null;
+        moveCellsDown(deletedCell);
+    }
+
+    private function moveCellsDown(deletedCell:Cell):void{
+        var currRow:Number = deletedCell.getRow;
+
+        for(var i:int = 1; i < 6; i++) {
+            if(deletedCell.getRow - i >= 0) {
+                //занулить то откуда уезжает
+                TweenLite.to(cells[deletedCell.getRow - i][deletedCell.getCol], 0.5, {y: currRow * 40 - ((i - 1) * 40)});
+                cells[deletedCell.getRow - i + 1][deletedCell.getCol] = cells[deletedCell.getRow - i][deletedCell.getCol];
+                cells[deletedCell.getRow - i + 1][deletedCell.getCol].setNewGridPosition(deletedCell.getRow - i + 1, deletedCell.getCol);
+            }
+            else{
+                break;
             }
         }
     }

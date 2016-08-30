@@ -7,7 +7,7 @@ import starling.display.Sprite;
 import com.greensock.*;
 
 public class Cell extends Sprite{
-    private var background:Quad;
+    public var background:Quad;
     private var typeOfCell:int;
     private var isPicked:Boolean = false;
     private var row:int;
