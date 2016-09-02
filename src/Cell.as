@@ -39,7 +39,7 @@ public class Cell extends Sprite{
             isPicked = true;
         }
         else{
-            //this.alpha = 1;
+            this.alpha = 1;
             isPicked = false;
         }
     }
